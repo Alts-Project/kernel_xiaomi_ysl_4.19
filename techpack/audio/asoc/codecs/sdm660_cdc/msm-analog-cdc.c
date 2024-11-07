@@ -27,6 +27,7 @@
 #include "msm-analog-cdc-regmap.h"
 #include <asoc/sdm660-common.h>
 #include <asoc/wcd-mbhc-v2-api.h>
+#include <asoc/msm8952.h>
 
 #define DRV_NAME "pmic_analog_codec"
 #define SDM660_CDC_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |\

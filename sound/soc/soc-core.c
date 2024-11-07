@@ -3563,6 +3563,10 @@ int snd_soc_register_codec(struct device *dev,
 #ifdef CONFIG_DEBUG_FS
 	codec->component.debugfs_prefix = "codec";
 #endif
+
+	if (codec_drv->get_regmap)
+		codec->component.regmap = codec_drv->get_regmap(dev);
+
 	for (i = 0; i < num_dai; i++) {
 		convert_endianness_formats(&dai_drv[i].playback);
 		convert_endianness_formats(&dai_drv[i].capture);

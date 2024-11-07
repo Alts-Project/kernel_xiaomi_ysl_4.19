@@ -481,6 +481,8 @@ int devm_snd_soc_register_component(struct device *dev,
 void snd_soc_unregister_component(struct device *dev);
 struct snd_soc_component *snd_soc_lookup_component(struct device *dev,
 						   const char *driver_name);
+int snd_soc_cache_init(struct snd_soc_codec *codec);
+int snd_soc_cache_exit(struct snd_soc_codec *codec);
 
 int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num);
 #ifdef CONFIG_SND_SOC_COMPRESS
@@ -939,6 +941,7 @@ struct snd_soc_component {
 
 #ifdef CONFIG_DEBUG_FS
 	struct dentry *debugfs_root;
+	void (*init_debugfs)(struct snd_soc_component *component);
 	const char *debugfs_prefix;
 #endif
 };
@@ -961,6 +964,12 @@ struct snd_soc_codec {
 	const struct snd_soc_codec_driver *driver;
 
 	struct list_head list;
+
+	/* runtime */
+	unsigned int cache_init:1; /* codec cache has been initialized */
+
+	/* codec IO */
+	void *reg_cache;
 
 	/* component */
 	struct snd_soc_component component;
@@ -988,6 +997,10 @@ struct snd_soc_codec_driver {
 	struct regmap *(*get_regmap)(struct device *);
 	unsigned int (*read)(struct snd_soc_codec *, unsigned int);
 	int (*write)(struct snd_soc_codec *, unsigned int, unsigned int);
+	unsigned int reg_cache_size;
+	short reg_cache_step;
+	short reg_word_size;
+	const void *reg_cache_default;
 
 	/* codec bias level */
 	int (*set_bias_level)(struct snd_soc_codec *,

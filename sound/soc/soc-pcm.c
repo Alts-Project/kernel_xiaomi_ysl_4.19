@@ -3299,8 +3299,8 @@ static void soc_pcm_private_free(struct snd_pcm *pcm)
 	for_each_rtdcom(rtd, rtdcom) {
 		component = rtdcom->component;
 
-		if (component->driver->pcm_free)
-			component->driver->pcm_free(pcm);
+		if (component->pcm_free)
+			component->pcm_free(component, pcm);
 	}
 }
 
@@ -3601,10 +3601,10 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
 	for_each_rtdcom(rtd, rtdcom) {
 		component = rtdcom->component;
 
-		if (!component->driver->pcm_new)
+		if (!component->pcm_new)
 			continue;
 
-		ret = component->driver->pcm_new(rtd);
+		ret = component->pcm_new(component, rtd);
 		if (ret < 0) {
 			dev_err(component->dev,
 				"ASoC: pcm constructor failed: %d\n",
